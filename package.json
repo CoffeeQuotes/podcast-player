@@ -1,0 +1,25 @@
+{
+  "name": "podcast-player",
+  "version": "1.0.0",
+  "description": "Podcast player to listen podcasts ",
+  "main": "public/script.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoffeeQuotes/podcast-player.git"
+  },
+  "author": "CoffeeQuotes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoffeeQuotes/podcast-player/issues"
+  },
+  "homepage": "https://github.com/CoffeeQuotes/podcast-player#readme",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "node-fetch": "^2.7.0"
+  }
+}
