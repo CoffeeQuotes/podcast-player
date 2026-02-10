@@ -1,8 +1,478 @@
-html {
+/* ==========================================================================
+   Google Fonts Import
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+/* ==========================================================================
+   CSS Reset - Meyer Reset v2.0
+   http://meyerweb.com/eric/tools/css/reset/
+   License: none (public domain)
+   ========================================================================== */
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+blockquote,
+q {
+	quotes: none;
+}
+
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* ==========================================================================
+   CSS Custom Properties (Design Tokens)
+   ========================================================================== */
+
+:root {
+	/* Core */
+	--soft-gold: #f3db94;
+	--graphite: #2e2f2f;
+	--teal-forest: #277966;
+	--neon-mint: #58f798;
+
+
+	/* Typography - Font Families */
+	--font-montserrat: "Montserrat", sans-serif;
+	--font-figtree: "Figtree", sans-serif;
+	--font-heading: var(--font-montserrat);
+	--font-body: var(--font-figtree);
+
+	/* Typography - Font Weights */
+	--fw-light: 300;
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-semibold: 600;
+	--fw-bold: 700;
+	--fw-extrabold: 800;
+	--weight-heading: var(--fw-bold);
+	--weight-body: var(--fw-regular);
+
+	/* Typography - Font Styles */
+	--fs-normal: normal;
+	--fs-italic: italic;
+
+	/* Typography - Font Sizes */
+	--text-xs: 0.75rem;
+	/* 12px */
+	--text-sm: 0.875rem;
+	/* 14px */
+	--text-base: 1rem;
+	/* 16px */
+	--text-lg: 1.125rem;
+	/* 18px */
+	--text-xl: 1.25rem;
+	/* 20px */
+	--text-2xl: 1.5rem;
+	/* 24px */
+	--text-3xl: 1.875rem;
+	/* 30px */
+	--text-4xl: 2.25rem;
+	/* 36px */
+	--text-5xl: 3rem;
+	/* 48px */
+	--text-6xl: 3.75rem;
+	/* 60px */
+	--text-7xl: 4.5rem;
+	/* 72px */
+
+	/* Typography - Semantic Font Sizes */
+	--size-body: var(--text-base);
+	--size-body-sm: var(--text-sm);
+	--size-body-lg: var(--text-lg);
+	--size-h1: var(--text-5xl);
+	--size-h2: var(--text-4xl);
+	--size-h3: var(--text-3xl);
+	--size-h4: var(--text-2xl);
+	--size-h5: var(--text-xl);
+	--size-h6: var(--text-lg);
+
+	/* Typography - Line Heights */
+	--lh-tight: 1.25;
+	--lh-snug: 1.375;
+	--lh-normal: 1.5;
+	--lh-relaxed: 1.625;
+	--lh-loose: 2;
+	--lh-body: var(--lh-normal);
+	--lh-heading: var(--lh-tight);
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
 	box-sizing: border-box;
 }
 
 body {
 	margin: 0;
 	min-height: 100vh;
+	font-family: var(--font-body);
+	font-size: var(--size-body);
+	font-weight: var(--weight-body);
+	line-height: var(--lh-body);
+	color: var(--graphite);
+	background-color: var(--soft-gold);
+}
+
+/* Typography */
+h1 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h1);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+h2 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h2);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+h3 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h3);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+h4 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h4);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+h5 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h5);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+h6 {
+	font-family: var(--font-heading);
+	font-size: var(--size-h6);
+	font-weight: var(--weight-heading);
+	line-height: var(--lh-heading);
+}
+
+p {
+	font-size: var(--size-body);
+	line-height: var(--lh-body);
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.font-figtree {
+	font-family: var(--font-figtree);
+	font-optical-sizing: auto;
+	font-style: var(--fs-normal);
+}
+
+.font-montserrat {
+	font-family: var(--font-montserrat);
+	font-optical-sizing: auto;
+	font-style: var(--fs-normal);
+}
+
+.italic {
+	font-style: var(--fs-italic);
+}
+
+/* Font Size Utilities */
+.text-xs {
+	font-size: var(--text-xs);
+}
+
+.text-sm {
+	font-size: var(--text-sm);
+}
+
+.text-base {
+	font-size: var(--text-base);
+}
+
+.text-lg {
+	font-size: var(--text-lg);
+}
+
+.text-xl {
+	font-size: var(--text-xl);
+}
+
+.text-2xl {
+	font-size: var(--text-2xl);
+}
+
+.text-3xl {
+	font-size: var(--text-3xl);
+}
+
+.text-4xl {
+	font-size: var(--text-4xl);
+}
+
+.text-5xl {
+	font-size: var(--text-5xl);
+}
+
+.text-6xl {
+	font-size: var(--text-6xl);
+}
+
+.text-7xl {
+	font-size: var(--text-7xl);
+}
+
+/* Font Weight Utilities */
+.fw-light {
+	font-weight: var(--fw-light);
+}
+
+.fw-regular {
+	font-weight: var(--fw-regular);
+}
+
+.fw-medium {
+	font-weight: var(--fw-medium);
+}
+
+.fw-semibold {
+	font-weight: var(--fw-semibold);
+}
+
+.fw-bold {
+	font-weight: var(--fw-bold);
+}
+
+.fw-extrabold {
+	font-weight: var(--fw-extrabold);
+}
+
+/* Line Height Utilities */
+.lh-tight {
+	line-height: var(--lh-tight);
+}
+
+.lh-snug {
+	line-height: var(--lh-snug);
+}
+
+.lh-normal {
+	line-height: var(--lh-normal);
+}
+
+.lh-relaxed {
+	line-height: var(--lh-relaxed);
+}
+
+.lh-loose {
+	line-height: var(--lh-loose);
+}
+
+
+/* Navigation */
+.nav-wrapper {
+	height: 50px;
+	width: 100%;
+	background-color: var(--graphite);
+}
+
+.nav {
+	display: flex;
+	align-items: center;
+	position: relative;
+	top: 10px;
+}
+
+.nav-title {
+	font-size: var(--text-2xl);
+	color: var(--neon-mint);
+	margin: 0;
+	margin-left: 25px;
+}
+
+/* Search Container */
+.search-container {
+	position: absolute;
+	top: 60px;
+	left: 20px;
+}
+
+/* Main Container */
+.page-wrapper {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: calc(100vh - 50px);
+}
+
+.main-container {
+	display: flex;
+	flex-direction: column;
+	width: calc(100% - 500px);
+	height: calc(100% - 100px);
+	margin: 0 auto;
+	margin-top: 75px;
+	padding: 20px;
+	box-sizing: border-box;
+	background-color: var(--teal-forest);
+	box-shadow: 0 18px 35px rgba(50, 50, 93, .1), -1px 0 15px rgba(0, 0, 0, .07) !important;
+}
+
+.player-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 450px;
+	margin-top: 75px;
+}
+
+/* Player Container */
+
+/*  Player */
+
+.player {
+	height: 400px;
+	width: 400px;
+	background-color: var(--teal-forest);
+	box-shadow: 0 18px 35px rgba(50, 50, 93, .1), -1px 0 15px rgba(0, 0, 0, .07) !important;
+	position: relative;
+}
+
+/* Queue */
+.queue {
+	height: calc(100% - 450px);
+	width: 400px;
+	margin-top: 25px;
+	padding: 10px;
+	box-sizing: border-box;
+	background-color: var(--teal-forest);
+	box-shadow: 0 18px 35px rgba(50, 50, 93, .1), -1px 0 15px rgba(0, 0, 0, .07) !important;
 }
