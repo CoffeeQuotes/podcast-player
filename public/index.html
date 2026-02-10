@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <!-- Fontawesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.17/dist/lenis.css">
 </head>
 
 <body>
@@ -45,6 +44,11 @@
                     </g>
                 </g>
             </svg>
+            <!-- Mobile Navigation  -->
+            <div class="nav-list">
+                <span id="searchLink" class="selected">Search</span>
+                <span id="listenLink">Listen</span>
+            </div>
         </nav>
     </div>
 
@@ -99,7 +103,7 @@
                 </svg>
             </div>
 
-            <div class="cards-container">
+            <div class="cards-container scroll-hidden">
                 <div class="card">
                     <img src="podcast-default-png.png" alt="podcast-default-png">
                     <div class="card-content">
@@ -161,19 +165,108 @@
         <!-- Player Container -->
         <div class="player-container">
             <div class="player">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sapiente illum iusto culpa sequi, sed
-                    natus soluta exercitationem. Et, laboriosam? Delectus ab animi autem aliquam in ipsa ullam! Beatae,
-                    quaerat?</p>
+                <!-- Image -->
+                <div class="img-container">
+                    <img id="image" src="./podcast-default-png.png" alt="Podcast Image">
+                </div>
+                <!-- Title Container  -->
+                <div class="title-container">
+                    <h2 id="title">Podcast Title</h2>
+                    <h3 id="datePublished">Date Published</h3>
+                </div>
+                <!-- Audio element  -->
+                <audio src="" id="player"></audio>
+                <div class="controls-container">
+                    <!-- Progress -->
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress" id="progress"></div>
+                        <div class="duration-wrapper">
+                            <span id="current-time">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <div class="player-controls">
+                        <i class="fas fa-backward" id="prev" title="-15 seconds"></i>
+                        <i class="fas fa-play main-button" id="play" title="Play"></i>
+                        <i class="fas fa-forward" id="next" title="+15 seconds"></i>
+                    </div>
+                </div>
             </div>
-            <div class="queue">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui, molestiae!</p>
+            <!-- Queue -->
+            <div class="queue scroll-hidden">
+                <!-- Queue Item 5 -->
+                <div class="queue-item">
+                    <img src="./podcast-default-png.png" alt="Podcast Image">
+                    <div class="queue-content">
+                        <h2>Episode title is going to be here, ofcourse</h2>
+                        <div class="icon-container">
+                            <i class="fas fa-play-circle" title="Play Podcast"></i>
+                            <i class="fas fa-trash" title="Remove from Queue"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="queue-item">
+                    <img src="./podcast-default-png.png" alt="Podcast Image">
+                    <div class="queue-content">
+                        <h2>Episode title is going to be here, ofcourse</h2>
+                        <div class="icon-container">
+                            <i class="fas fa-play-circle" title="Play Podcast"></i>
+                            <i class="fas fa-trash" title="Remove from Queue"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="queue-item">
+                    <img src="./podcast-default-png.png" alt="Podcast Image">
+                    <div class="queue-content">
+                        <h2>Episode title is going to be here, ofcourse</h2>
+                        <div class="icon-container">
+                            <i class="fas fa-play-circle" title="Play Podcast"></i>
+                            <i class="fas fa-trash" title="Remove from Queue"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="queue-item">
+                    <img src="./podcast-default-png.png" alt="Podcast Image">
+                    <div class="queue-content">
+                        <h2>Episode title is going to be here, ofcourse</h2>
+                        <div class="icon-container">
+                            <i class="fas fa-play-circle" title="Play Podcast"></i>
+                            <i class="fas fa-trash" title="Remove from Queue"></i>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-    <!-- Lenis  -->
-    <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
     <!-- Custom JS -->
     <script src="script.js"></script>
+    <!-- Put this at the bottom of your HTML body -->
+    <script>
+        (function connect() {
+            console.log("🔄 Connecting to Live Reload...");
+            const ws = new WebSocket("ws://localhost:8765");
+
+            ws.onopen = () => console.log("✅ Live Reload Connected");
+
+            ws.onmessage = () => {
+                console.log("⚡ Refreshing...");
+                location.reload();
+            };
+
+            ws.onclose = () => {
+                console.log("❌ Connection lost. Reconnecting in 1s...");
+                // Try to reconnect in 1 second
+                setTimeout(connect, 1000);
+            };
+
+            ws.onerror = (err) => {
+                console.error("WebSocket error", err);
+                ws.close();
+            };
+        })();
+    </script>
 </body>
 
 </html>
