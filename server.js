@@ -27,10 +27,12 @@ function generateAuthHeaders() {
 }
 
 // Search for podcasts
-app.get('/api/search', async  (req, res)  => {
+app.get('/api/search', async (req, res) => {
     const query = req.query.q;
-    if(!query){
-        return res.status(400).json({error: 'Query parameter is required'});
+    if (!query) {
+        return res.status(400).json({
+            error: 'Query parameter is required'
+        });
     }
     const headers = generateAuthHeaders();
 
@@ -40,24 +42,67 @@ app.get('/api/search', async  (req, res)  => {
             headers: headers
         });
 
-        if(response.ok && response.headers.get('content-type').includes('application/json')) {
+        if (response.ok && response.headers.get('content-type').includes('application/json')) {
             const data = await response.json();
             res.json(data);
         } else {
             const rawText = await response.text();
             console.log('Raw Response:', rawText);
-            res.status(500).json({error: 'Something went wrong', rawText});
+            res.status(500).json({
+                error: 'Something went wrong',
+                rawText
+            });
         }
 
     } catch (error) {
         console.error('Error fetching API', error.message);
-        return res.status(500).json({error: error.message});
+        return res.status(500).json({
+            error: error.message
+        });
     }
 
 });
 
+// fetch episodes by itunes id
+app.get('/api/episodes', async (req, res) => {
+
+    const feedId = req.query.feedId;
+    const max = req.query.max;
+
+    if (!feedId) {
+        return res.status(400).json({
+            error: 'Feed ID parameter is required'
+        });
+    }
+    const headers = generateAuthHeaders();
+
+    try {
+        const response = await fetch(`${apiEndpoint}/episodes/byitunesid?id=${feedId}&max=${max}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (response.ok && response.headers.get('content-type').includes('application/json')) {
+            const data = await response.json();
+            res.json(data);
+        } else {
+            const rawText = await response.text();
+            console.log('Raw Response:', rawText);
+            res.status(500).json({
+                error: 'Something went wrong',
+                rawText
+            });
+        }
+
+    } catch (error) {
+        console.error('Error fetching API', error.message);
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+
+});
 
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
-

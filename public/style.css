@@ -609,11 +609,11 @@ button:active {
 
 	0%,
 	100% {
-		color: var(--neon-mint);
+		color: var(--teal-forest);
 	}
 
 	50% {
-		color: var(--ocean-mist);
+		color: var(--neon-mint);
 	}
 }
 
@@ -641,6 +641,10 @@ button:active {
 	display: flex;
 	transition: transform 0.2s ease;
 	scroll-snap-align: start;
+	
+}
+.pointer {
+	cursor: pointer;
 }
 
 .card:hover {
@@ -649,6 +653,7 @@ button:active {
 
 .card img {
 	width: 250px;
+	min-width: 250px;
 	height: 100%;
 	object-fit: contain;
 	flex-shrink: 0;

@@ -87,6 +87,75 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideLoader() {
         loader.style.display = 'none';
         responseContainer.style.display = 'flex';
+        responseContainer.scrollTo({
+            top:0
+        });
+    }
+
+    // handle fallback image
+    function handlefallbackImage(img) {
+        const fallbackImage = './podcast-default-png.png';
+        img.src = fallbackImage; 
+        return img; 
+    }
+
+    // setup to load images of podcast/episodes 
+    function handleImageLoad(limit) {
+        const images = responseContainer.getElementsByTagName('img');
+        let imagesToLoad = Math.min(images.length, limit);
+        const fallbackImage = './podcast-default-png.png';
+
+        if (imagesToLoad === 0) {
+            hideLoader();
+            return; 
+        }
+
+        Array.from(images).slice(0, limit).forEach(img => {
+            img.onload = img.onerror = () => {
+                imagesToLoad--;
+
+                if (img.complete && !img.naturalWidth) {
+                    img  = handlefallbackImage(img);
+                }
+
+                if (imagesToLoad === 0) {
+                    hideLoader();
+                    lazyLoadRemainingImages(limit);
+                }
+
+            }
+        });
+    }
+
+    // Lazy load images after initial load
+
+    function lazyLoadRemainingImages(start) {
+        const remainingImages = Array.from(responseContainer.getElementsByTagName('img')).slice(start);
+        const lazyLoadObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    let img = entry.target;
+                    if(img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.onload = img.onerror = () => {
+                            
+                            if (img.complete && !img.naturalWidth) {
+                                img  = handlefallbackImage(img);
+                            }
+ 
+                            lazyLoadObserver.unobserve(img);
+                        }
+                    } else {
+                        img  = handlefallbackImage(img);
+                        lazyLoadObserver.unobserve(img);
+                    }
+                }
+            });
+        });
+
+        remainingImages.forEach(img =>  {
+            lazyLoadObserver.observe(img);
+        });
     }
 
     // Search Podcast 
@@ -108,13 +177,28 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             responseContainer.textContent = '';
+            
+            const titles = new Set();
 
             if (data.feeds && data.feeds.length > 0) {
                 // console.log(data.feeds);
-                data.feeds.forEach((podcast) => {
-                    const card = createCard(podcast);
-                    responseContainer.appendChild(card);
+                data.feeds.forEach((podcast, index) => {
+                    if (podcast.episodeCount > 0  && !titles.has(podcast.title)) {
+                        titles.add(podcast.title);
+                        const card = createCard(podcast);
+                        responseContainer.appendChild(card);
+
+                        // Lazy Loading images 
+                        if (index >= 25) {
+                            card.querySelector('img').dataset.src = card.querySelector('img').src;
+                            card.querySelector('img').src = ''; 
+                        }
+                    }
+
+                    handleImageLoad(25);
+                
                 });
+
             } else {
                 responseContainer.innerText = 'No results were found.'
             }
@@ -122,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
             responseContainer.innerText = `Error: ${error.message}`
         }
 
-        hideLoader();
+        // hideLoader();
 
     }
 
@@ -130,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createCard(podcast) {
         //  Card 
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'card pointer';
 
         // Image
         const img = document.createElement('img');
@@ -168,9 +252,115 @@ document.addEventListener("DOMContentLoaded", () => {
         card.appendChild(img);
         card.appendChild(content);
 
+        card.addEventListener('click', () => {
+            loadEpisodes(podcast.itunesId, podcast.episodeCount);
+        })
+
         return card;
 
     }
+
+    // load episodes 
+    async function loadEpisodes(feedId, count) {
+        if (!feedId) return;
+
+        showLoader();
+
+        try {
+            const response = await fetch(`/api/episodes?feedId=${feedId}&max=${count}`);
+            const data = await response.json();
+
+            responseContainer.textContent = '';
+
+            if (data.items && data.items.length > 0) {
+
+                // console.log("Episodes: ", data.items);
+                data.items.forEach((episode, index) => {
+                    const card = createEpisodeCard(episode);
+                    responseContainer.appendChild(card);
+                    
+                    // Lazy Loading images 
+                    if (index >= 25) {
+                        card.querySelector('img').dataset.src = card.querySelector('img').src;
+                        card.querySelector('img').src = ''; 
+                    } 
+                });
+
+            } else {
+                responseContainer.innerText = 'No results were found.'
+            }
+
+            handleImageLoad(25); 
+
+        } catch (error) {
+            responseContainer.innerText = `Error: ${error.message}`
+        }
+
+        // hideLoader();
+    }
+
+    // Create Episode Card
+    function createEpisodeCard(episode) {
+        //  Card 
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        // Image
+        const img = document.createElement('img');
+        img.src = episode.image || episode.feedImage || './podcast-default-png.png';
+        img.alt = episode.title;
+
+        // Card content
+        const content = document.createElement('div');
+        content.className = 'card-content';
+
+        // H3 Title
+        const title = document.createElement('h3');
+        title.innerText = episode.title;
+
+        // Icon Container
+        const iconContainer = document.createElement('div');
+        iconContainer.className = 'icon-container';
+
+        const playBtnIcon = document.createElement('button');
+        playBtnIcon.innerText = 'Play';
+        playBtnIcon.addEventListener('click', () => {
+            console.log('Episode Played: ', episode);
+        });
+
+        const queueButton = document.createElement('button');
+        // queueButton.className = 'fas fa-list pointer';
+        queueButton.innerText = 'Add to Queue';
+        queueButton.addEventListener('click', () => {
+            console.log('Episode added to queue: ',episode);
+        });
+    
+        // Description
+        const description = document.createElement('p');
+        description.innerHTML = episode.description;
+
+        // Publish Date
+
+        const pubDate = document.createElement('p');
+        pubDate.className = 'pub-date';
+        pubDate.innerText = `Published: ${episode.datePublished ? formatDate(episode.datePublished) : 'Not availble'}`;
+
+        iconContainer.appendChild(pubDate);
+        
+        // Append into content
+        content.appendChild(title);
+        iconContainer.appendChild(queueButton);
+        iconContainer.appendChild(playBtnIcon);
+        content.appendChild(description);
+        content.appendChild(pubDate);
+        content.appendChild(iconContainer);
+
+        card.appendChild(img);
+        card.appendChild(content);
+        
+        return card;
+    }
+
 
 
 
