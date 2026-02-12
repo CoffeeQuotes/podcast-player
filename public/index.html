@@ -72,7 +72,7 @@
         <!-- Main Container -->
         <div class="main-container">
             <!-- Loader  -->
-            <div class="loader-container">
+            <div id="loader" class="loader-container">
                 <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 575.793 575.793" style="
     width: 3rem;
     height: 3rem;
@@ -103,8 +103,8 @@
                 </svg>
             </div>
 
-            <div class="cards-container scroll-hidden">
-                <div class="card">
+            <div id="response" class="cards-container scroll-hidden">
+                <!-- <div class="card">
                     <img src="podcast-default-png.png" alt="podcast-default-png">
                     <div class="card-content">
                         <h3>Mind Over Metrics</h3>
@@ -158,7 +158,7 @@
                         <button>Play</button>
                         <button>Add to Queue</button>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -243,7 +243,7 @@
     <!-- Custom JS -->
     <script src="script.js"></script>
     <!-- Put this at the bottom of your HTML body -->
-    <script>
+    <!-- <script>
         (function connect() {
             console.log("🔄 Connecting to Live Reload...");
             const ws = new WebSocket("ws://localhost:8765");
@@ -266,7 +266,7 @@
                 ws.close();
             };
         })();
-    </script>
+    </script> -->
 </body>
 
 </html>
