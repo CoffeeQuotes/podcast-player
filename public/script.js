@@ -96,8 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // handle fallback image
     function handlefallbackImage(img) {
         const fallbackImage = './podcast-default-png.png';
-        img.src = fallbackImage; 
-        return img; 
+        img.src = fallbackImage;
+        return img;
     }
 
     // setup to load images of podcast/episodes 
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (imagesToLoad === 0) {
             hideLoader();
-            return; 
+            return;
         }
 
         Array.from(images).slice(0, limit).forEach(img => {
@@ -139,11 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (img.dataset.src) {
                         img.src = img.dataset.src;
                         img.onload = img.onerror = () => {
-                            
+
                             if (img.complete && !img.naturalWidth) {
                                 img = handlefallbackImage(img);
                             }
- 
+
                             lazyLoadObserver.unobserve(img);
                         }
                     } else {
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             responseContainer.textContent = '';
-            
+
             const titles = new Set();
 
             if (data.feeds && data.feeds.length > 0) {
@@ -190,12 +190,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         // Lazy Loading images 
                         if (index >= 25) {
                             card.querySelector('img').dataset.src = card.querySelector('img').src;
-                            card.querySelector('img').src = ''; 
+                            card.querySelector('img').src = '';
                         }
                     }
 
                     handleImageLoad(25);
-                
+
                 });
 
             } else {
@@ -275,19 +275,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.items.forEach((episode, index) => {
                     const card = createEpisodeCard(episode);
                     responseContainer.appendChild(card);
-                    
+
                     // Lazy Loading images 
                     if (index >= 25) {
                         card.querySelector('img').dataset.src = card.querySelector('img').src;
-                        card.querySelector('img').src = ''; 
-                    } 
+                        card.querySelector('img').src = '';
+                    }
                 });
 
             } else {
                 responseContainer.innerText = 'No results were found.'
             }
 
-            handleImageLoad(25); 
+            handleImageLoad(25);
 
         } catch (error) {
             responseContainer.innerText = `Error: ${error.message}`
@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         queueButton.addEventListener('click', () => {
             addToQueue(episode);
         });
-    
+
         // Description
         const description = document.createElement('p');
         description.innerHTML = episode.description;
@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pubDate.innerText = `Published: ${episode.datePublished ? formatDate(episode.datePublished) : 'Not availble'}`;
 
         iconContainer.appendChild(pubDate);
-        
+
         // Append into content
         content.appendChild(title);
         iconContainer.appendChild(queueButton);
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.appendChild(img);
         card.appendChild(content);
-        
+
         return card;
     }
 
@@ -362,20 +362,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let queueItems = [];
 
     // Add item to queue
-    function addToQueue(episode) 
-    {
+    function addToQueue(episode) {
         const card = document.createElement('div');
         card.className = 'queue-item';
 
         const img = document.createElement('img');
         img.src = episode.image || episode.feedImage || './podcast-default-png.png';
-        img.alt = episode.title; 
+        img.alt = episode.title;
 
         const content = document.createElement('div');
         content.className = 'queue-content';
 
         const title = document.createElement('h2');
-        title.textContent = episode.title; 
+        title.textContent = episode.title;
 
 
         const iconContainer = document.createElement('div');
@@ -398,10 +397,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         iconContainer.appendChild(playBtnIcon);
         iconContainer.appendChild(removeBtnIcon);
-        
+
         content.appendChild(title);
         content.appendChild(iconContainer);
-        
+
         card.appendChild(img);
         card.appendChild(content);
 
@@ -494,6 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isPlaying = true;
         playBtn.classList.replace('fa-play', 'fa-pause');
         playBtn.setAttribute('title', 'Pause');
+        if (isMobileDevice()) navigateToPlayer();
         player.play();
     }
 
@@ -510,17 +510,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update Podcast Container
     function loadPodcast(episode) {
-        
+
         currentTimeEl.style.display = 'none';
         durationEl.style.display = 'none';
 
         title.textContent = episode.title;
         playerDatePublished.textContent = `${episode.datePublished ? formatDate(episode.datePublished) : 'Not availble'}`;
-        player.src = episode.enclosureUrl; 
+        player.src = episode.enclosureUrl;
         image.src = episode.image || episode.feedImage || './podcast-default-png.png';
-        
+
         // Reset player 
-        player.currentTime = 0; 
+        player.currentTime = 0;
         progress.classList.add('loading');
         currentTimeEl.textContent = '0:00';
 
@@ -544,16 +544,16 @@ document.addEventListener("DOMContentLoaded", () => {
         let seconds = Math.floor(time % 60);
 
         // format seconds 
-        if (seconds < 10) seconds = `0${seconds}`; 
+        if (seconds < 10) seconds = `0${seconds}`;
 
         // format minutes 
-        const formattedMinutes = hours > 0 && minutes < 10 ? `0${minutes}` : minutes; 
+        const formattedMinutes = hours > 0 && minutes < 10 ? `0${minutes}` : minutes;
 
         // Display time in hours:minutes:seconds or minutes:seconds 
         if (time) {
-            elName.textContent = hours > 0 
-                ? `${hours}:${formattedMinutes}:${seconds}`
-                : `${minutes}:${seconds}`
+            elName.textContent = hours > 0 ?
+                `${hours}:${formattedMinutes}:${seconds}` :
+                `${minutes}:${seconds}`
         }
 
     }
@@ -574,7 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
         progress.style.width = `${progressPercent}%`;
 
         // format Time 
-        formatTime(duration, durationEl); 
+        formatTime(duration, durationEl);
         formatTime(currentTime, currentTimeEl);
     }
 
@@ -596,15 +596,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Check if screen width is less than 1025px
     function isMobileDevice() {
-        return window.innerWidth < 1025; 
+        return window.innerWidth < 1025;
     }
 
     // Save the player state to localStorage every 5 secs 
 
     setInterval(() => {
-        
+
         if (isPlaying) {
-            
+
             const playerState = {
                 title: title.textContent,
                 datePublished: datePublished.textContent,
@@ -622,13 +622,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load Save Player State from localStorage 
 
     function loadPlayerState() {
-        
+
         const savedState = JSON.parse(localStorage.getItem('playerState'));
 
         if (savedState) {
             title.textContent = savedState.title;
             datePublished.textContent = savedState.datePublished;
-            player.src = savedState.src;     
+            player.src = savedState.src;
             image.src = savedState.image;
             player.currentTime = savedState.currentTime;
             formatTime(savedState.currentTime, currentTimeEl);
@@ -636,7 +636,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formatTime(savedState.duration, durationEl);
 
             progress.style.width = `${(savedState.currentTime / savedState.duration)  * 100}%`;
-            if (isMobileDevice()) navigateToPlayer(); 
+            if (isMobileDevice()) navigateToPlayer();
         }
     }
 
@@ -644,7 +644,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // On Statup
     loadPlayerState();
     loadQueue();
+
+
+    // For our service worker ------------------------//
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registred with scope', registration.scope);
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed: ', error);
+                });
+        });
+    }
 });
-
-
-
