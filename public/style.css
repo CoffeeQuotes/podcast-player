@@ -754,7 +754,7 @@ button:active {
 }
 
 .player .title-container h2 {
-	font-size: var(--text-xl);
+	font-size: clamp(1.1rem, 50%, var(--text-xl));
 	text-align: center;
 	font-weight: var(--fw-bold);
 	margin: 0;
@@ -792,6 +792,21 @@ button:active {
 	height: 100%;
 	width: 0%;
 	transition: width 0.1s linear;
+}
+
+/* Progress Loading animation  */
+
+@keyframes loadingAnimation {
+	0%, 100% {
+		width: 0%;
+	}
+	50% {
+		width: 100%;
+	}
+}
+
+.loading {
+	animation: loadingAnimation 2s infinite ease-in-out;
 }
 
 .duration-wrapper {
@@ -950,6 +965,7 @@ button:active {
 
 	.page-wrapper {
 		flex-direction: column;
+		margin-top: 50px;
 	}
 
 	/* Search Container  */
@@ -957,6 +973,7 @@ button:active {
 		position: relative;
 		flex-direction: column;
 		left: 5px;
+		top: 10px;
 	}
 
 	.custom-select {
@@ -980,7 +997,7 @@ button:active {
 	/* Main Container */
 	.main-container {
 		width: calc(100% - 20px);
-		margin-top: 65px;
+		margin-top: 15px;
 		height: calc(100% - 180px);
 		padding: 5px 10px;
 	}
@@ -1009,7 +1026,7 @@ button:active {
 	.player {
 		height: 380px;
 		width: calc(100% - 20px);
-		top: 60px;
+		top: 10px;
 	}
 
 	.title-container {
@@ -1019,7 +1036,7 @@ button:active {
 	.queue {
 		margin-top: unset;
 		position: relative;
-		top: 80px;
+		top: 30px;
 		width: calc(100% - 20px);
 		height: calc(100% - 480px);
 	}

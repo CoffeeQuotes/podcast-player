@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetButton = document.getElementById('resetButton');
     const loader = document.getElementById('loader');
     const responseContainer = document.getElementById('response');
+    const queueContainer = document.querySelector('.queue');
 
     // Reset Search History 
     function resetHistory() {
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loader.style.display = 'none';
         responseContainer.style.display = 'flex';
         responseContainer.scrollTo({
-            top:0
+            top: 0
         });
     }
 
@@ -115,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 imagesToLoad--;
 
                 if (img.complete && !img.naturalWidth) {
-                    img  = handlefallbackImage(img);
+                    img = handlefallbackImage(img);
                 }
 
                 if (imagesToLoad === 0) {
@@ -133,27 +134,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const remainingImages = Array.from(responseContainer.getElementsByTagName('img')).slice(start);
         const lazyLoadObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if(entry.isIntersecting) {
+                if (entry.isIntersecting) {
                     let img = entry.target;
-                    if(img.dataset.src) {
+                    if (img.dataset.src) {
                         img.src = img.dataset.src;
                         img.onload = img.onerror = () => {
                             
                             if (img.complete && !img.naturalWidth) {
-                                img  = handlefallbackImage(img);
+                                img = handlefallbackImage(img);
                             }
  
                             lazyLoadObserver.unobserve(img);
                         }
                     } else {
-                        img  = handlefallbackImage(img);
+                        img = handlefallbackImage(img);
                         lazyLoadObserver.unobserve(img);
                     }
                 }
             });
         });
 
-        remainingImages.forEach(img =>  {
+        remainingImages.forEach(img => {
             lazyLoadObserver.observe(img);
         });
     }
@@ -162,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     async function searchPodcast() {
         const searchTerm = searchInput.value.trim();
         if (searchTerm) {
-            console.log('Searched : ', searchTerm);
             saveSearchHistory(searchTerm);
             LoadSearchHistory();
         } else {
@@ -181,9 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const titles = new Set();
 
             if (data.feeds && data.feeds.length > 0) {
-                // console.log(data.feeds);
                 data.feeds.forEach((podcast, index) => {
-                    if (podcast.episodeCount > 0  && !titles.has(podcast.title)) {
+                    if (podcast.episodeCount > 0 && !titles.has(podcast.title)) {
                         titles.add(podcast.title);
                         const card = createCard(podcast);
                         responseContainer.appendChild(card);
@@ -273,8 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
             responseContainer.textContent = '';
 
             if (data.items && data.items.length > 0) {
-
-                // console.log("Episodes: ", data.items);
                 data.items.forEach((episode, index) => {
                     const card = createEpisodeCard(episode);
                     responseContainer.appendChild(card);
@@ -325,14 +322,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const playBtnIcon = document.createElement('button');
         playBtnIcon.innerText = 'Play';
         playBtnIcon.addEventListener('click', () => {
-            console.log('Episode Played: ', episode);
+            loadPodcast(episode);
         });
 
         const queueButton = document.createElement('button');
         // queueButton.className = 'fas fa-list pointer';
         queueButton.innerText = 'Add to Queue';
         queueButton.addEventListener('click', () => {
-            console.log('Episode added to queue: ',episode);
+            addToQueue(episode);
         });
     
         // Description
@@ -361,10 +358,86 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     }
 
+    // Set Queue Array 
+    let queueItems = [];
+
+    // Add item to queue
+    function addToQueue(episode) 
+    {
+        const card = document.createElement('div');
+        card.className = 'queue-item';
+
+        const img = document.createElement('img');
+        img.src = episode.image || episode.feedImage || './podcast-default-png.png';
+        img.alt = episode.title; 
+
+        const content = document.createElement('div');
+        content.className = 'queue-content';
+
+        const title = document.createElement('h2');
+        title.textContent = episode.title; 
 
 
+        const iconContainer = document.createElement('div');
+        iconContainer.className = 'icon-container';
+
+        const playBtnIcon = document.createElement('i');
+        playBtnIcon.className = 'fas fa-play-circle pointer';
+        playBtnIcon.title = 'Play Podcast';
+        playBtnIcon.addEventListener('click', () => {
+            loadPodcast(episode);
+        });
 
 
+        const removeBtnIcon = document.createElement('i');
+        removeBtnIcon.className = 'fas fa-trash pointer';
+        removeBtnIcon.title = 'Remove from Queue';
+        removeBtnIcon.addEventListener('click', () => {
+            deleteFromQueue(episode);
+        });
+
+        iconContainer.appendChild(playBtnIcon);
+        iconContainer.appendChild(removeBtnIcon);
+        
+        content.appendChild(title);
+        content.appendChild(iconContainer);
+        
+        card.appendChild(img);
+        card.appendChild(content);
+
+        queueContainer.appendChild(card);
+
+        saveQueue(episode);
+
+    }
+
+    // Delete Items from queue
+    function deleteFromQueue(episode) {
+        queueItems = queueItems.filter(item => item.title !== episode.title);
+        localStorage.setItem('queue', JSON.stringify(queueItems));
+
+        const queueElements = document.querySelectorAll('.queue-item');
+        queueElements.forEach(item => {
+            const title = item.querySelector('h2').innerText;
+            if (title === episode.title) item.remove();
+        });
+
+    }
+
+    // Save Items to queue
+
+    function saveQueue(episode) {
+        queueItems.push(episode);
+        localStorage.setItem('queue', JSON.stringify(queueItems));
+    }
+
+    // load Items from queue
+    function loadQueue() {
+        const savedQueue = JSON.parse(localStorage.getItem('queue'));
+        if (savedQueue) {
+            savedQueue.forEach(episode => addToQueue(episode));
+        }
+    }
 
 
     // Navigation ---------------------------- // 
@@ -374,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchContainer = document.querySelector('.search-container');
     const mainContainer = document.querySelector('.main-container');
     const playerContainer = document.querySelector('.player-container');
-    const queueContainer = document.querySelector('.queue');
+    // const queueContainer = document.querySelector('.queue'); // appended on top!!!!
 
     searchLink.addEventListener('click', navigateToSearch);
     listenLink.addEventListener('click', navigateToPlayer);
@@ -397,146 +470,181 @@ document.addEventListener("DOMContentLoaded", () => {
         listenLink.classList.add('selected');
     }
 
+    // Player logic ----------------------------------------/
+
+
+    const image = document.getElementById('image');
+    const title = document.getElementById('title');
+    const playerDatePublished = document.getElementById('datePublished');
+    const player = document.getElementById('player');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const progress = document.getElementById('progress');
+    const progressContainer = document.getElementById('progress-container');
+    const prevBtn = document.getElementById('prev');
+    const playBtn = document.getElementById('play');
+    const nextBtn = document.getElementById('next');
+
+
+    // Check if Playing
+    let isPlaying = false;
+
+    // Play
+    function playPodcast() {
+        isPlaying = true;
+        playBtn.classList.replace('fa-play', 'fa-pause');
+        playBtn.setAttribute('title', 'Pause');
+        player.play();
+    }
+
+    // Pause
+    function pausePodcast() {
+        isPlaying = false;
+        playBtn.classList.replace('fa-pause', 'fa-play');
+        playBtn.setAttribute('title', 'Play');
+        player.pause();
+    }
+
+    // Play or Pause Event Listener
+    playBtn.addEventListener('click', () => (isPlaying ? pausePodcast() : playPodcast()));
+
+    // Update Podcast Container
+    function loadPodcast(episode) {
+        
+        currentTimeEl.style.display = 'none';
+        durationEl.style.display = 'none';
+
+        title.textContent = episode.title;
+        playerDatePublished.textContent = `${episode.datePublished ? formatDate(episode.datePublished) : 'Not availble'}`;
+        player.src = episode.enclosureUrl; 
+        image.src = episode.image || episode.feedImage || './podcast-default-png.png';
+        
+        // Reset player 
+        player.currentTime = 0; 
+        progress.classList.add('loading');
+        currentTimeEl.textContent = '0:00';
+
+        player.addEventListener('loadedmetadata', () => {
+            const duration = player.duration;
+            currentTimeEl.style.display = 'block';
+            durationEl.style.display = 'block';
+            formatTime(duration, durationEl);
+            progress.classList.remove('loading');
+            playPodcast();
+        });
+
+
+    }
+
+    // format time function
+    function formatTime(time, elName) {
+        // Calculate hours, minutes and seconds 
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time % 3600) / 60);
+        let seconds = Math.floor(time % 60);
+
+        // format seconds 
+        if (seconds < 10) seconds = `0${seconds}`; 
+
+        // format minutes 
+        const formattedMinutes = hours > 0 && minutes < 10 ? `0${minutes}` : minutes; 
+
+        // Display time in hours:minutes:seconds or minutes:seconds 
+        if (time) {
+            elName.textContent = hours > 0 
+                ? `${hours}:${formattedMinutes}:${seconds}`
+                : `${minutes}:${seconds}`
+        }
+
+    }
+
+    // Skip forward or backward 10 secs
+    function skipTime(amount) {
+        player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + amount));
+    }
+
+    // Update Progress Bar & Time
+    function updateProgressBar(e) {
+        const {
+            duration,
+            currentTime
+        } = e.srcElement;
+        // Update progress bar width
+        const progressPercent = (currentTime / duration) * 100;
+        progress.style.width = `${progressPercent}%`;
+
+        // format Time 
+        formatTime(duration, durationEl); 
+        formatTime(currentTime, currentTimeEl);
+    }
+
+    // Set Progress Bar
+    function setProgressBar(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const {
+            duration
+        } = player;
+        player.currentTime = (clickX / width) * duration;
+    }
+
+    // Event Listeners
+    player.addEventListener('timeupdate', updateProgressBar);
+    progressContainer.addEventListener('click', setProgressBar);
+    prevBtn.addEventListener('click', () => skipTime(-15));
+    nextBtn.addEventListener('click', () => skipTime(15));
+
+    // Check if screen width is less than 1025px
+    function isMobileDevice() {
+        return window.innerWidth < 1025; 
+    }
+
+    // Save the player state to localStorage every 5 secs 
+
+    setInterval(() => {
+        
+        if (isPlaying) {
+            
+            const playerState = {
+                title: title.textContent,
+                datePublished: datePublished.textContent,
+                currentTime: player.currentTime,
+                duration: player.duration,
+                image: image.src,
+                src: player.src
+            };
+
+            localStorage.setItem('playerState', JSON.stringify(playerState));
+        }
+
+    }, 5000);
+
+    // Load Save Player State from localStorage 
+
+    function loadPlayerState() {
+        
+        const savedState = JSON.parse(localStorage.getItem('playerState'));
+
+        if (savedState) {
+            title.textContent = savedState.title;
+            datePublished.textContent = savedState.datePublished;
+            player.src = savedState.src;     
+            image.src = savedState.image;
+            player.currentTime = savedState.currentTime;
+            formatTime(savedState.currentTime, currentTimeEl);
+            player.duration = savedState.duration;
+            formatTime(savedState.duration, durationEl);
+
+            progress.style.width = `${(savedState.currentTime / savedState.duration)  * 100}%`;
+            if (isMobileDevice()) navigateToPlayer(); 
+        }
+    }
+
+
+    // On Statup
+    loadPlayerState();
+    loadQueue();
 });
 
 
 
-
-
-// const image = document.querySelector('img');
-// const title = document.getElementById('title');
-// const artist = document.getElementById('artist');
-// const music = document.querySelector('audio');
-// const currentTimeEl = document.getElementById('current-time');
-// const durationEl = document.getElementById('duration');
-// const progress = document.getElementById('progress');
-// const progressContainer = document.getElementById('progress-container');
-// const prevBtn = document.getElementById('prev');
-// const playBtn = document.getElementById('play');
-// const nextBtn = document.getElementById('next');
-
-// // Music
-// const songs = [{
-//         name: 'jacinto-1',
-//         displayName: 'Electric Chill Machine',
-//         artist: 'Jacinto Design',
-//     },
-//     {
-//         name: 'jacinto-2',
-//         displayName: 'Seven Nation Army (Remix)',
-//         artist: 'Jacinto Design',
-//     },
-//     {
-//         name: 'jacinto-3',
-//         displayName: 'Goodnight, Disco Queen',
-//         artist: 'Jacinto Design',
-//     },
-//     {
-//         name: 'metric-1',
-//         displayName: 'Front Row (Remix)',
-//         artist: 'Metric/Jacinto Design',
-//     },
-// ];
-
-// // Check if Playing
-// let isPlaying = false;
-
-// // Play
-// function playSong() {
-//     isPlaying = true;
-//     playBtn.classList.replace('fa-play', 'fa-pause');
-//     playBtn.setAttribute('title', 'Pause');
-//     music.play();
-// }
-
-// // Pause
-// function pauseSong() {
-//     isPlaying = false;
-//     playBtn.classList.replace('fa-pause', 'fa-play');
-//     playBtn.setAttribute('title', 'Play');
-//     music.pause();
-// }
-
-// // Play or Pause Event Listener
-// playBtn.addEventListener('click', () => (isPlaying ? pauseSong() : playSong()));
-
-// // Update DOM
-// function loadSong(song) {
-//     title.textContent = song.displayName;
-//     artist.textContent = song.artist;
-//     music.src = `music/${song.name}.mp3`;
-//     image.src = `img/${song.name}.jpg`;
-// }
-
-// // Current Song
-// let songIndex = 0;
-
-// // Previous Song
-// function prevSong() {
-//     songIndex--;
-//     if (songIndex < 0) {
-//         songIndex = songs.length - 1;
-//     }
-//     loadSong(songs[songIndex]);
-//     playSong();
-// }
-
-// // Next Song
-// function nextSong() {
-//     songIndex++;
-//     if (songIndex > songs.length - 1) {
-//         songIndex = 0;
-//     }
-//     loadSong(songs[songIndex]);
-//     playSong();
-// }
-
-// // On Load - Select First Song
-// loadSong(songs[songIndex]);
-
-// // Update Progress Bar & Time
-// function updateProgressBar(e) {
-//     if (isPlaying) {
-//         const {
-//             duration,
-//             currentTime
-//         } = e.srcElement;
-//         // Update progress bar width
-//         const progressPercent = (currentTime / duration) * 100;
-//         progress.style.width = `${progressPercent}%`;
-//         // Calculate display for duration
-//         const durationMinutes = Math.floor(duration / 60);
-//         let durationSeconds = Math.floor(duration % 60);
-//         if (durationSeconds < 10) {
-//             durationSeconds = `0${durationSeconds}`;
-//         }
-//         // Delay switching duration Element to avoid NaN
-//         if (durationSeconds) {
-//             durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
-//         }
-//         // Calculate display for currentTime
-//         const currentMinutes = Math.floor(currentTime / 60);
-//         let currentSeconds = Math.floor(currentTime % 60);
-//         if (currentSeconds < 10) {
-//             currentSeconds = `0${currentSeconds}`;
-//         }
-//         currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
-//     }
-// }
-
-// // Set Progress Bar
-// function setProgressBar(e) {
-//     const width = this.clientWidth;
-//     const clickX = e.offsetX;
-//     const {
-//         duration
-//     } = music;
-//     music.currentTime = (clickX / width) * duration;
-// }
-
-// // Event Listeners
-// prevBtn.addEventListener('click', prevSong);
-// nextBtn.addEventListener('click', nextSong);
-// music.addEventListener('ended', nextSong);
-// music.addEventListener('timeupdate', updateProgressBar);
-// progressContainer.addEventListener('click', setProgressBar);
