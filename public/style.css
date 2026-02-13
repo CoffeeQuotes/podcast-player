@@ -641,8 +641,9 @@ button:active {
 	display: flex;
 	transition: transform 0.2s ease;
 	scroll-snap-align: start;
-	
+
 }
+
 .pointer {
 	cursor: pointer;
 }
@@ -797,9 +798,12 @@ button:active {
 /* Progress Loading animation  */
 
 @keyframes loadingAnimation {
-	0%, 100% {
+
+	0%,
+	100% {
 		width: 0%;
 	}
+
 	50% {
 		width: 100%;
 	}
@@ -917,161 +921,56 @@ button:active {
 	color: var(--btn-danger);
 }
 
-
-/*  Smartphone / Tablet  */
-@media (max-width: 1025px) {
-
-	html,
-	body {
-		overflow-x: hidden;
-	}
-
-	/* Navigation  */
-	.nav-wrapper {
-		position: fixed;
-		z-index: 10;
-	}
-
-	.nav-title {
-		font-size: var(--text-xl);
-	}
-
-	.nav {
-		top: 14px;
-	}
-
-	.nav-list {
-		position: relative;
-		display: flex;
-		top: 3px;
-		left: -4px;
-	}
-
-	.nav-list span {
-		font-size: var(--text-lg);
-		color: var(--pure-white);
-		position: relative;
-		left: 15px;
-		padding-bottom: 1px;
-	}
-
-	.nav-list span:first-child {
-		margin-right: 12px;
-	}
-
-	.nav-list .selected {
-		border-bottom: 2px solid var(--teal-forest);
-	}
-
-	.page-wrapper {
-		flex-direction: column;
-		margin-top: 50px;
-	}
-
-	/* Search Container  */
-	.search-container {
-		position: relative;
-		flex-direction: column;
-		left: 5px;
-		top: 10px;
-	}
-
-	.custom-select {
-		width: calc(100% - 20px);
-		margin-right: unset;
-		margin-bottom: 10px;
-	}
-
-	input {
-		width: calc(100% - 20px);
-	}
-
-	.search-buttons {
-		width: calc(100% - 10px);
-	}
-
-	button {
-		width: 50%;
-	}
-
-	/* Main Container */
-	.main-container {
-		width: calc(100% - 20px);
-		margin-top: 15px;
-		height: calc(100% - 180px);
-		padding: 5px 10px;
-	}
-
-	/* Card's Container */
-	.cards-container {
-		gap: 10px;
-		margin-top: 10px;
-		margin-bottom: 10px;
-	}
-
-	.card {
-		width: 100%;
-	}
-
-	/*  Player  */
-	.player-container {
-		position: relative;
-		margin-top: unset;
-		width: 100%;
-		height: 100%;
-		display: none;
-		justify-content: center;
-	}
-
-	.player {
-		height: 380px;
-		width: calc(100% - 20px);
-		top: 10px;
-	}
-
-	.title-container {
-		top: -30px;
-	}
-
-	.queue {
-		margin-top: unset;
-		position: relative;
-		top: 30px;
-		width: calc(100% - 20px);
-		height: calc(100% - 480px);
-	}
-}
-
+/* =========================================
+   UPDATED MEDIA QUERIES
+   Changed max-width from 500px to 600px
+   to accommodate larger Android viewports
+   ========================================= */
 
 /* Smartphone Vertical Media Queries */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+
+	/* SCROLL FIX */
 	.cards-container {
 		scroll-snap-type: none;
 		scroll-behavior: auto;
 	}
 
+	/* CARD LAYOUT FIX: Forces vertical stacking */
 	.card {
 		height: auto;
 		align-items: flex-start;
 		flex-direction: column;
+		/* This is what you were missing */
 	}
 
 	.card img {
 		width: 100%;
 		height: auto;
+		max-height: 300px;
+		/* Optional: prevents huge images on 500px+ screens */
+		object-fit: cover;
 	}
 
-	.card .content {
+	/* TYPO FIXED: You correctly identified .card-content here */
+	.card .card-content {
 		width: auto;
-		padding: 10px;
+		padding: 15px;
+		/* Increased slightly for touch targets */
 		font-size: var(--text-xs);
 		overflow-y: unset;
 	}
+
+	/* Optional: Ensure text doesn't look too small on 500px+ screens */
+	.card .card-content h3 {
+		font-size: var(--text-lg);
+	}
 }
 
-/* Smartphone: Vertical with Browser UI */
-
-@media (max-width: 500px) and (max-height: 675px) {
+/* Smartphone: Vertical with Browser UI 
+   Updated to 600px width to match the cards, 
+   kept height constraint for small screens */
+@media (max-width: 600px) and (max-height: 675px) {
 	.main-container {
 		height: calc(100% - 160px);
 	}
@@ -1098,7 +997,6 @@ button:active {
 		height: calc(100% - 340px);
 		top: 68px;
 	}
-
 }
 
 /* Scrollbar */
